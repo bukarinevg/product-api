@@ -1,0 +1,45 @@
+services:
+    nginx:
+      image: nginx:alpine
+      ports:
+        - "8080:80"
+        - "443:443"
+      volumes:
+        - ./:/var/www
+        - ./nginx/conf.d:/etc/nginx/conf.d
+      depends_on:
+        - product-api
+      networks:
+        - product-network
+  
+    product-api:
+      build:
+        context: .
+      volumes:
+        - ./:/var/www
+        - vendor:/var/www/vendor
+      depends_on:
+        - db
+      networks:
+        - product-network
+  
+    db:
+      image: mysql:8.4
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: secret
+        MYSQL_DATABASE: products
+      volumes:
+        - dbdata:/var/lib/mysql
+      networks:
+        - product-network
+
+networks:
+  product-network:
+
+volumes:
+  dbdata:
+    driver: local
+  vendor:
+    driver: local
