@@ -13,6 +13,8 @@ services:
         - product-network
   
     product-api:
+      ports:
+        - "9000:9000"
       build:
         context: .
       volumes:
